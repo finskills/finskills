@@ -1,7 +1,7 @@
 ---
 name: finskills
 display_name: Finskills — Real-time Financial Data
-description: Access real-time financial data including stock quotes, cryptocurrency prices, forex exchange rates, macroeconomic indicators, financial news, analyst ratings, insider trades, and SEC filings. Use this skill whenever the user asks about stock prices, market data, crypto prices, exchange rates, economic indicators, company financials, or financial research.
+description: Access real-time financial data including stock quotes, cryptocurrency prices, forex exchange rates, macroeconomic indicators, commodity prices (energy, metals, agriculture, livestock), financial news, analyst ratings, insider trades, and SEC filings. Use this skill whenever the user asks about stock prices, market data, crypto prices, exchange rates, economic indicators, commodity prices, oil, gold, silver, natural gas, agricultural products, company financials, or financial research.
 homepage: https://finskills.net
 ---
 
@@ -82,6 +82,48 @@ Base URL: `https://finskills.net`
 | `GET /v1/macro/indicator/{series}` | FRED economic data | series: GDP, CPIAUCSL, FEDFUNDS, UNRATE |
 | `GET /v1/macro/interest-rates` | US Federal Funds rate history | — |
 
+### Commodities (Free)
+
+Real-time futures prices and historical series for energy, metals, agriculture, and livestock. All endpoints require only a valid API key.
+
+**Categories:** `energy` · `metals_precious` · `metals_industrial` · `agriculture` · `livestock` · `other`
+
+| Endpoint | Description | Key Params |
+|----------|-------------|------------|
+| `GET /v1/free/commodity/catalog` | Full commodity catalog (27 instruments, metadata) | `?category=energy` |
+| `GET /v1/free/commodity/prices` | Real-time prices for all or one category | `?category=metals_precious` |
+| `GET /v1/free/commodity/price/{symbol}` | Single instrument real-time quote | symbol e.g. `GC=F` (Gold), `CL=F` (WTI Oil) |
+| `GET /v1/free/commodity/history/{symbol}` | Historical OHLCV candlesticks | `?range=1y&interval=1d` (range: 1d/5d/1m/3m/6m/1y/2y/5y/max · interval: 1d/1wk/1mo) |
+| `GET /v1/free/commodity/fred` | FRED series catalog (16 daily series) | — |
+| `GET /v1/free/commodity/fred/{seriesId}` | FRED daily price history | `?limit=365&startDate=2020-01-01` |
+| `GET /v1/free/commodity/imf` | IMF PCPS indicator catalog (30 monthly indicators) | — |
+| `GET /v1/free/commodity/imf/{indicator}` | IMF monthly price series | `?periods=120` |
+| `GET /v1/free/commodity/imf/batch` | IMF batch — multiple indicators at once | `?indicators=POILAPSP,PGOLD` |
+
+**Common symbols:**
+
+| Symbol | Instrument | Exchange |
+|--------|------------|---------|
+| `CL=F` | WTI Crude Oil | NYMEX |
+| `BZ=F` | Brent Crude Oil | ICE |
+| `NG=F` | Natural Gas | NYMEX |
+| `GC=F` | Gold | COMEX |
+| `SI=F` | Silver | COMEX |
+| `PL=F` | Platinum | NYMEX |
+| `HG=F` | Copper | COMEX |
+| `ZC=F` | Corn | CBOT |
+| `ZW=F` | Wheat | CBOT |
+| `ZS=F` | Soybeans | CBOT |
+| `KC=F` | Coffee | ICE |
+| `SB=F` | Sugar #11 | ICE |
+| `CT=F` | Cotton | ICE |
+| `LE=F` | Live Cattle | CME |
+| `HE=F` | Lean Hogs | CME |
+
+**Common FRED series IDs:** `DCOILWTICO` (WTI oil), `DCOILBRENTEU` (Brent), `DHHNGSP` (Natural Gas), `GOLDAMGBD228NLBM` (Gold AM Fix)
+
+**Common IMF indicators:** `POILAPSP` (crude avg), `PGOLD` (gold), `PSILVER`, `PCOPP` (copper), `PWHEAMT` (wheat), `PMAIZMT` (corn), `PSOYBEAN`, `PNICK` (nickel)
+
 ### Market Overview
 
 | Endpoint | Description |
@@ -145,6 +187,26 @@ Common CIK numbers: Apple → 0000320193, Microsoft → 0000789019, Tesla → 00
 **SEC filings:**
 > "Find Apple's latest 10-K filing"
 → Call `GET /v1/free/sec/filings/0000320193`
+
+**Commodity price:**
+> "What is the current price of gold and WTI crude oil?"
+→ Call `GET /v1/free/commodity/price/GC=F` and `GET /v1/free/commodity/price/CL=F`
+
+**Commodity comparison:**
+> "Show me energy commodity prices — oil, gas, and gasoline"
+→ Call `GET /v1/free/commodity/prices?category=energy`
+
+**Commodity history:**
+> "How has gold performed over the past year?"
+→ Call `GET /v1/free/commodity/history/GC=F?range=1y&interval=1d`
+
+**Oil price long-term trend:**
+> "Show me the WTI crude oil price trend since 2020"
+→ Call `GET /v1/free/commodity/fred/DCOILWTICO?startDate=2020-01-01`
+
+**Agricultural overview:**
+> "Show me current prices for corn, wheat, and soybeans"
+→ Call `GET /v1/free/commodity/prices?category=agriculture` or individual `/price/ZC=F`, `/price/ZW=F`, `/price/ZS=F`
 
 **Market overview:**
 > "How are markets doing today? Show me sector performance."

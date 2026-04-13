@@ -10,7 +10,7 @@
 | Feature | Description |
 |---------|-------------|
 | **Real-time Data** | Live market quotes, not static training data |
-| **7 Data Categories** | Stocks · Crypto · Forex · Macro · News · Filings · Sentiment |
+| **8 Data Categories** | Stocks · Crypto · Forex · Macro · Commodities · News · Filings · Sentiment |
 | **Free Tier** | Most endpoints work with any valid API key at no cost |
 | **Standard Format** | Follows [Anthropic SKILL.md](https://github.com/anthropics/skills) specification |
 
@@ -73,8 +73,9 @@ Ask natural language questions — no special commands needed.
 | "What's Apple's stock price and analyst consensus?" | `/v1/stocks/quote/AAPL` + `/v1/free/stocks/analyst-rating-summary/AAPL` |
 | "Compare Bitcoin and Ethereum over the last 30 days" | `/v1/free/crypto/history/bitcoin?days=30` + `/v1/free/crypto/history/ethereum?days=30` |
 | "What's the USD/EUR exchange rate trend this year?" | `/v1/free/forex/history?base=USD&target=EUR` |
-| "Show US GDP growth and inflation for the last 5 years" | `/v1/free/macro/gdp?country=US` + `/v1/free/macro/inflation?country=US` |
-| "Find Tesla's latest 10-K SEC filing" | `/v1/free/sec/filings/0001318605` |
+| "Show US GDP growth and inflation for the last 5 years" | `/v1/free/macro/gdp?country=US` + `/v1/free/macro/inflation?country=US` || "What is the current gold and crude oil price?" | `/v1/free/commodity/price/GC=F` + `/v1/free/commodity/price/CL=F` |
+| "Show me energy commodity prices" | `/v1/free/commodity/prices?category=energy` |
+| "How has gold performed over the past year?" | `/v1/free/commodity/history/GC=F?range=1y` || "Find Tesla's latest 10-K SEC filing" | `/v1/free/sec/filings/0001318605` |
 | "Are any Congress members trading NVIDIA?" | `/v1/free/stocks/congress-trades?symbol=NVDA` |
 | "Show me sector performance and market movers today" | `/v1/market/summary` + `/v1/market/sectors` |
 | "Are Tesla insiders buying or selling?" | `/v1/free/stocks/insider-trades/TSLA` |
@@ -86,6 +87,7 @@ Ask natural language questions — no special commands needed.
 - **Cryptocurrency** — Prices, market rankings, historical data (CoinGecko IDs: bitcoin, ethereum, solana…)
 - **Forex** — Live exchange rates, historical rate data
 - **Macroeconomics** — GDP, inflation, Treasury yields, FRED economic series, interest rates
+- **Commodities** — Real-time futures prices and historical series for 27 instruments across 6 categories: energy (WTI, Brent, Natural Gas), precious metals (Gold, Silver, Platinum, Palladium), industrial metals (Copper, Aluminum), agriculture (Corn, Wheat, Soybeans, Coffee, Sugar, Cotton, Cocoa), and livestock; backed by Yahoo Finance, FRED daily series, and IMF monthly indicators
 - **Market Overview** — Major indices, sector performance, trending tickers
 - **News** — Financial headlines, stock-specific news
 - **SEC Filings** — 10-K, 10-Q, 8-K filings, XBRL structured data
