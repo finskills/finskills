@@ -27,7 +27,7 @@ Choose one of the methods below:
 #### Claude Code (npx)
 
 ```bash
-npx skills add yushuyang/finskills
+npx skills add finskills/finskills
 ```
 
 #### Claude.ai (Project Knowledge)
