@@ -15,7 +15,7 @@ All requests require the `X-API-Key` header. Ask the user for their API key if n
 Get a key at: https://finskills.net/register
 
 ```
-X-API-Key: <api_key>
+X-API-Key: YOUR_API_KEY_HERE
 ```
 
 Base URL: `https://finskills.net`

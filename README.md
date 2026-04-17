@@ -119,21 +119,14 @@ finskills/
 
 ## MCP Support
 
-Finskills also supports the **Model Context Protocol (MCP)** for direct tool-based integration:
-
-```
-MCP Endpoint: https://finskills.net/mcp
-Transport: Streamable HTTP (SSE)
-```
-
-See [finskills.net/mcp](https://finskills.net/mcp) for MCP documentation.
+Finskills also supports the **Model Context Protocol (MCP)** for direct tool-based integration.
+See the [MCP documentation](https://finskills.net/documentation) on the website for setup details.
 
 ## Links
 
 - **Website**: [finskills.net](https://finskills.net)
 - **API Docs**: [finskills.net/documentation](https://finskills.net/documentation)
 - **Skill Page**: [finskills.net/skill](https://finskills.net/skill)
-- **MCP Docs**: [finskills.net/mcp](https://finskills.net/mcp)
 - **Register**: [finskills.net/register](https://finskills.net/register)
 - **Anthropic Skills Spec**: [github.com/anthropics/skills](https://github.com/anthropics/skills)
 
