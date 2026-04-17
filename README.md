@@ -1,6 +1,6 @@
-# Finskills — Real-time Financial Data Skill
+# Finskills — Stock Quantitative Investment Skill
 
-> An AI skill that gives Claude and other assistants real-time access to stock quotes, cryptocurrency prices, forex rates, macroeconomic indicators, analyst ratings, insider trades, financial news, and SEC filings.
+> An AI skill that gives Claude and other assistants real-time access to stock quotes, OHLCV history, company fundamentals, earnings data, analyst recommendations, macroeconomic indicators, commodity signals, SEC filings, and financial news — purpose-built for systematic investment analysis.
 
 [![Anthropic Skills](https://img.shields.io/badge/Anthropic-Skills-blueviolet)](https://github.com/anthropics/skills)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
@@ -9,8 +9,9 @@
 
 | Feature | Description |
 |---------|-------------|
-| **Real-time Data** | Live market quotes, not static training data |
-| **8 Data Categories** | Stocks · Crypto · Forex · Macro · Commodities · News · Filings · Sentiment |
+| **Real-time Data** | Live market quotes and OHLCV, not static training data |
+| **9 Data Categories** | Stocks · Fundamentals · Options · Macro · Commodities · Forex · News · Filings · Crypto |
+| **Quantitative Focus** | Designed for factor analysis, screening, and systematic research workflows |
 | **Free Tier** | Most endpoints work with any valid API key at no cost |
 | **Standard Format** | Follows [Anthropic SKILL.md](https://github.com/anthropics/skills) specification |
 
@@ -70,27 +71,62 @@ Ask natural language questions — no special commands needed.
 
 | You ask | Endpoints called |
 |---------|-----------------|
-| "What's Apple's stock price and analyst consensus?" | `/v1/stocks/quote/AAPL` + `/v1/free/stocks/analyst-rating-summary/AAPL` |
-| "Compare Bitcoin and Ethereum over the last 30 days" | `/v1/free/crypto/history/bitcoin?days=30` + `/v1/free/crypto/history/ethereum?days=30` |
-| "What's the USD/EUR exchange rate trend this year?" | `/v1/free/forex/history?base=USD&target=EUR` |
-| "Show US GDP growth and inflation for the last 5 years" | `/v1/free/macro/gdp?country=US` + `/v1/free/macro/inflation?country=US` || "What is the current gold and crude oil price?" | `/v1/free/commodity/price/GC=F` + `/v1/free/commodity/price/CL=F` |
-| "Show me energy commodity prices" | `/v1/free/commodity/prices?category=energy` |
-| "How has gold performed over the past year?" | `/v1/free/commodity/history/GC=F?range=1y` || "Find Tesla's latest 10-K SEC filing" | `/v1/free/sec/filings/0001318605` |
-| "Are any Congress members trading NVIDIA?" | `/v1/free/stocks/congress-trades?symbol=NVDA` |
-| "Show me sector performance and market movers today" | `/v1/market/summary` + `/v1/market/sectors` |
-| "Are Tesla insiders buying or selling?" | `/v1/free/stocks/insider-trades/TSLA` |
+| "Screen the Magnificent 7 for momentum and valuation" | `/v1/stocks/quotes?symbols=AAPL,MSFT,GOOGL,META,NVDA,AMZN,TSLA` + history per stock |
+| "Analyze Apple's financial quality: ROE, margins, FCF" | `/v1/stocks/financials/AAPL?freq=yearly` |
+| "Has Microsoft been consistently beating earnings?" | `/v1/stocks/earnings/MSFT` |
+| "Is the yield curve inverted? Show the full curve." | `/v1/free/macro/treasury-rates` + `/v1/macro/indicator/T10Y2Y` |
+| "Which sectors are outperforming? What does macro say?" | `/v1/market/sectors` + `/v1/macro/interest-rates` + `/v1/macro/inflation` |
+| "What is the current gold price and trend?" | `/v1/free/commodity/price/GC=F` + `/v1/free/commodity/history/GC=F?range=3mo` |
+| "Is copper signaling economic expansion?" | `/v1/free/commodity/history/HG=F?range=1y&interval=1wk` |
+| "Find Tesla's latest 10-K SEC filing" | `/v1/free/sec/filings/0001318605` |
+| "What is Nvidia's implied volatility before earnings?" | `/v1/stocks/options/NVDA` |
+| "Show macro risk dashboard: VIX, credit spreads, curve" | `/v1/macro/indicator/VIXCLS` + `/v1/macro/indicator/T10Y2Y` + `/v1/free/macro/treasury-rates` |
 
 ## Supported Data Categories
 
-- **Stocks** — Real-time quotes, historical OHLCV, company profiles, financials, dividends, options, earnings, holders
-- **Alternative Data** — Analyst ratings, Congress trades, insider transactions, WallStreetBets sentiment
-- **Cryptocurrency** — Prices, market rankings, historical data (CoinGecko IDs: bitcoin, ethereum, solana…)
-- **Forex** — Live exchange rates, historical rate data
-- **Macroeconomics** — GDP, inflation, Treasury yields, FRED economic series, interest rates
-- **Commodities** — Real-time futures prices and historical series for 27 instruments across 6 categories: energy (WTI, Brent, Natural Gas), precious metals (Gold, Silver, Platinum, Palladium), industrial metals (Copper, Aluminum), agriculture (Corn, Wheat, Soybeans, Coffee, Sugar, Cotton, Cocoa), and livestock; backed by Yahoo Finance, FRED daily series, and IMF monthly indicators
-- **Market Overview** — Major indices, sector performance, trending tickers
-- **News** — Financial headlines, stock-specific news
-- **SEC Filings** — 10-K, 10-Q, 8-K filings, XBRL structured data
+- **Stocks** — Real-time quotes, batch pricing, historical OHLCV, company profiles, search
+- **Fundamentals** — Income statement, balance sheet, cash flow, earnings history, dividends
+- **Market Intelligence** — Analyst recommendations, institutional holders, options chains
+- **Market Overview** — Major indices, sector performance, trending tickers, top movers
+- **Macroeconomics** — US GDP/CPI/Fed Funds rate, full Treasury yield curve, 50+ FRED series, World Bank global indicators
+- **Commodities** — Real-time futures for 27 instruments (energy, precious metals, industrial metals, agriculture, livestock); FRED daily series; IMF monthly price indicators
+- **Forex** — Live exchange rates (150+ currencies), historical rate series
+- **News** — Financial headlines, stock-specific news articles
+- **SEC Filings** — 10-K, 10-Q, 8-K filings; XBRL structured financial data via EDGAR
+- **Cryptocurrency** — Prices, market rankings, historical data (bitcoin, ethereum, solana…)
+
+## Quantitative Workflows
+
+### Momentum Strategy
+Rank stocks by 12-1 month return (skip recent month to avoid reversal).
+```
+GET /v1/stocks/quotes?symbols=...         → Universe pricing
+GET /v1/stocks/history/{symbol}?interval=1mo  → Monthly returns for ranking
+GET /v1/market/sectors                    → Sector momentum confirmation
+```
+
+### Value / Quality Screening
+```
+GET /v1/stocks/quote/{symbol}             → P/E, P/B, market cap
+GET /v1/stocks/financials/{symbol}        → ROE, FCF yield, Debt/Equity, margins
+GET /v1/stocks/recommendations/{symbol}   → Analyst consensus check
+```
+
+### Risk Environment Assessment
+```
+GET /v1/free/macro/treasury-rates         → Yield curve shape
+GET /v1/macro/indicator/T10Y2Y            → Inversion signal (recession risk)
+GET /v1/macro/indicator/VIXCLS            → Market fear gauge
+GET /v1/macro/indicator/BAMLH0A0HYM2      → High-yield credit spreads
+GET /v1/macro/interest-rates + inflation  → Rate/inflation regime
+```
+
+### Sector Rotation (Macro-driven)
+```
+Rising rates + high inflation → Energy, Financials, Materials, Industrials
+Low rates + low inflation     → Tech, Consumer Discretionary, Real Estate
+GET /v1/market/sectors        → Confirm which sectors are actually leading
+```
 
 ## How It Works
 
@@ -103,7 +139,7 @@ Claude sends HTTP request to Finskills API (with X-API-Key header)
         ↓
 Finskills returns real-time JSON data
         ↓
-Claude formats a contextualized answer
+Claude formats a contextualized, data-driven answer
 ```
 
 ## Project Structure
